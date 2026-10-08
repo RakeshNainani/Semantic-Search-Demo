@@ -61,6 +61,7 @@ def chunk_document(
 
     return chunks
 
+
 def chunk_documents(
     documents: list[Document],
     max_characters: int = 800,
