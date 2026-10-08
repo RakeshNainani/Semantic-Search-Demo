@@ -1,68 +1,55 @@
 from pathlib import Path
 
-from semantic_search_demo.chunker import chunk_documents
-from semantic_search_demo.embeddings import EmbeddingService
-from semantic_search_demo.loaders.document_loader import load_documents
-from semantic_search_demo.similarity import cosine_similarity
+from semantic_search_demo.semantic_search_service import (
+    SemanticSearchService,
+)
 
 
 DOCUMENT_DIRECTORY = Path("data/docs")
 
 
 def main() -> None:
-    documents = load_documents(
-        DOCUMENT_DIRECTORY
+    search_service = SemanticSearchService(
+        document_directory=DOCUMENT_DIRECTORY,
     )
 
-    chunks = chunk_documents(
-        documents=documents,
-        max_characters=800,
-    )
+    print("Building index...")
 
-    chunk_texts = [
-        chunk.text
-        for chunk in chunks
-    ]
-
-    embedding_service = EmbeddingService()
-
-    chunk_embeddings = embedding_service.embed(
-        chunk_texts
-    )
+    search_service.build_index()
 
     query = (
         "I forgot my password and no longer "
         "have access to my MFA device."
     )
 
-    query_embedding = embedding_service.embed(
-        [query]
-    )[0]
-
-    scores = cosine_similarity(
-        query_embedding=query_embedding,
-        document_embeddings=chunk_embeddings,
+    results = search_service.search(
+        query=query,
+        top_k=5,
+        min_score=0.0,
     )
-
-    print(f"Documents: {len(documents)}")
-    print(f"Chunks: {len(chunks)}")
 
     print()
     print(f"Query: {query}")
-
     print()
-    print(f"Query embedding shape: {query_embedding.shape}")
-    print(f"Scores shape: {scores.shape}")
 
-    print()
-    print("First 10 similarity scores:")
+    if not results:
+        print("No relevant results found.")
+        return
 
-    for index, score in enumerate(scores[:10]):
-        print(
-            f"{index}: "
-            f"{chunks[index].chunk_id} "
-            f"-> {score:.4f}"
-        )
+    
+    for rank, result in enumerate(
+        results,
+        start=1,
+    ):
+        print("=" * 80)
+        print(f"Rank: {rank}")
+        print(f"Score: {result.score:.4f}")
+        print(f"Document: {result.document_id}")
+        print(f"Chunk: {result.chunk_id}")
+        print(f"Source: {result.source}")
+        print()
+        print(result.text)
+        print()
 
 
 if __name__ == "__main__":

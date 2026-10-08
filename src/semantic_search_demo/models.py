@@ -17,3 +17,11 @@ class Chunk:
     file_type: str
     chunk_index: int
     text: str
+
+@dataclass
+class SearchResult:
+    chunk_id: str
+    document_id: str
+    source: str
+    score: float
+    text: str
