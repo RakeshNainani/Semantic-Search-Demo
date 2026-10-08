@@ -29,6 +29,7 @@ class InMemoryVectorStore(VectorStore):
         query_embedding: np.ndarray,
         top_k: int = 3,
         min_score: float = 0.0,
+        filters: dict[str, str] | None = None,
     ) -> list[SearchResult]:
 
         if self.embeddings is None:
@@ -43,15 +44,6 @@ class InMemoryVectorStore(VectorStore):
 
         ranked_indices = np.argsort(scores)[::-1]
 
-        print()
-        print("Top raw similarity scores:")
-        for index in ranked_indices[:5]:
-            print(
-                f"{self.chunks[index].chunk_id}: "
-                f"{scores[index]:.4f}"
-            )
-
-
         results: list[SearchResult] = []
 
         for index in ranked_indices:
@@ -61,6 +53,14 @@ class InMemoryVectorStore(VectorStore):
                 continue
 
             chunk = self.chunks[index]
+
+            # Apply metadata filters
+            if filters:
+                if not self._matches_filters(
+                    chunk=chunk,
+                    filters=filters,
+                ):
+                    continue
 
             results.append(
                 SearchResult(
@@ -76,3 +76,28 @@ class InMemoryVectorStore(VectorStore):
                 break
 
         return results
+
+    def _matches_filters(
+        self,
+        chunk: Chunk,
+        filters: dict[str, str],
+    ) -> bool:
+
+        for key, expected_value in filters.items():
+
+            if key == "document_id":
+                actual_value = chunk.document_id
+
+            elif key == "file_type":
+                actual_value = chunk.file_type
+
+            elif key == "source":
+                actual_value = chunk.source
+
+            else:
+                actual_value = chunk.metadata.get(key)
+
+            if actual_value != expected_value:
+                return False
+
+        return True

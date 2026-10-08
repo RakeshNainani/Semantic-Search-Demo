@@ -81,6 +81,7 @@ class QdrantVectorStore(VectorStore):
                         "file_type": chunk.file_type,
                         "chunk_index": chunk.chunk_index,
                         "text": chunk.text,
+                        **chunk.metadata,
                     },
                 )
             )
@@ -96,13 +97,35 @@ class QdrantVectorStore(VectorStore):
         query_embedding: np.ndarray,
         top_k: int = 3,
         min_score: float = 0.0,
+        filters: dict[str, str] | None = None,
     ) -> list[SearchResult]:
+        query_filter = None
+
+        if filters:
+            query_filter = models.Filter(
+                must=[
+                    models.FieldCondition(
+                        key=key,
+                        match=models.MatchValue(
+                            value=value
+                        ),
+                    )
+                    for key, value in filters.items()
+                ]
+            )
+
 
         response = self.client.query_points(
             collection_name=self.collection_name,
             query=query_embedding.tolist(),
             limit=top_k,
             with_payload=True,
+            query_filter=query_filter,
+            score_threshold=(
+                min_score
+                if min_score > 0
+                else None
+            ),
         )
 
         results: list[SearchResult] = []
@@ -110,26 +133,15 @@ class QdrantVectorStore(VectorStore):
         for point in response.points:
             score = float(point.score)
 
-            if score < min_score:
-                continue
-
             payload = point.payload or {}
 
             results.append(
                 SearchResult(
-                    chunk_id=str(
-                        payload.get("chunk_id", "")
-                    ),
-                    document_id=str(
-                        payload.get("document_id", "")
-                    ),
-                    source=str(
-                        payload.get("source", "")
-                    ),
+                    chunk_id=str(payload.get("chunk_id", "")),
+                    document_id=str(payload.get("document_id", "")),
+                    source=str(payload.get("source", "")),
                     score=score,
-                    text=str(
-                        payload.get("text", "")
-                    ),
+                    text=str(payload.get("text", "")),
                 )
             )
 

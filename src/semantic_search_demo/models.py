@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -7,6 +7,9 @@ class Document:
     source: str
     file_type: str
     text: str
+    metadata: dict[str, str] = field(
+        default_factory=dict
+    )
 
 
 @dataclass
@@ -17,6 +20,10 @@ class Chunk:
     file_type: str
     chunk_index: int
     text: str
+    metadata: dict[str, str] = field(
+        default_factory=dict
+    )
+
 
 @dataclass
 class SearchResult:

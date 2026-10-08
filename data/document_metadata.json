@@ -1,0 +1,43 @@
+{
+  "cloud_architecture_standard": {
+    "organization": "Northstar Technologies Pvt. Ltd.",
+    "document_owner": "Enterprise Architecture",
+    "classification": "Internal",
+    "version": "2.4"
+  },
+
+  "information_security_policy": {
+    "organization": "Northstar Technologies Pvt. Ltd.",
+    "document_owner": "Information Security",
+    "classification": "Internal",
+    "version": "3.1"
+  },
+
+  "travel_and_expense_policy": {
+    "organization": "Northstar Technologies Pvt. Ltd.",
+    "document_owner": "Finance",
+    "classification": "Internal",
+    "version": "4.1"
+  },
+
+  "incident_management_sop": {
+    "organization": "Northstar Technologies Pvt. Ltd.",
+    "document_owner": "IT Operations",
+    "classification": "Internal",
+    "version": "2.2"
+  },
+
+  "vendor_onboarding_process": {
+    "organization": "Northstar Technologies Pvt. Ltd.",
+    "document_owner": "Procurement",
+    "classification": "Internal",
+    "version": "1.8"
+  },
+
+  "data_access_standard": {
+    "organization": "Northstar Technologies Pvt. Ltd.",
+    "document_owner": "Data Governance",
+    "classification": "Internal",
+    "version": "2.0"
+  }
+}

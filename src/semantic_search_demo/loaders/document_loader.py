@@ -4,7 +4,10 @@ from semantic_search_demo.loaders.docx_loader import load_docx
 from semantic_search_demo.loaders.markdown_loader import load_markdown
 from semantic_search_demo.loaders.pdf_loader import load_pdf
 from semantic_search_demo.models import Document
-
+from semantic_search_demo.metadata import extract_metadata
+from semantic_search_demo.metadata_loader import (
+    get_document_metadata,
+)
 
 SUPPORTED_EXTENSIONS = {
     ".pdf",
@@ -17,17 +20,25 @@ def load_document(path: Path) -> Document:
     extension = path.suffix.lower()
 
     if extension == ".pdf":
-        return load_pdf(path)
+        document = load_pdf(path)
 
-    if extension == ".docx":
-        return load_docx(path)
+    elif extension == ".docx":
+        document = load_docx(path)
 
-    if extension == ".md":
-        return load_markdown(path)
+    elif extension == ".md":
+        document = load_markdown(path)
+    else:
+        raise ValueError(
+            f"Unsupported file type: {extension}"
+        )
 
-    raise ValueError(
-        f"Unsupported file type: {extension}"
+    document.metadata.update(
+        get_document_metadata(
+            document.document_id
+        )
     )
+
+    return document
 
 def load_documents(directory: Path) -> list[Document]:
     documents: list[Document] = []

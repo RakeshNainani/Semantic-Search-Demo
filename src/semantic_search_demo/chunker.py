@@ -5,7 +5,6 @@ def chunk_document(
     document: Document,
     max_characters: int = 800,
 ) -> list[Chunk]:
-    
     paragraphs = [
         paragraph.strip()
         for paragraph in document.text.split("\n\n")
@@ -35,6 +34,9 @@ def chunk_document(
                     file_type=document.file_type,
                     chunk_index=chunk_index,
                     text=chunk_text,
+
+                    # IMPORTANT
+                    metadata=document.metadata.copy(),
                 )
             )
 
@@ -45,6 +47,7 @@ def chunk_document(
         current_parts.append(paragraph)
         current_length += paragraph_length
 
+    # Add final chunk
     if current_parts:
         chunk_text = "\n\n".join(current_parts)
 
@@ -56,6 +59,9 @@ def chunk_document(
                 file_type=document.file_type,
                 chunk_index=chunk_index,
                 text=chunk_text,
+
+                # IMPORTANT
+                metadata=document.metadata.copy(),
             )
         )
 

@@ -21,5 +21,6 @@ class VectorStore(ABC):
         query_embedding: np.ndarray,
         top_k: int = 3,
         min_score: float = 0.0,
+        filters: dict[str, str] | None = None,
     ) -> list[SearchResult]:
         pass
