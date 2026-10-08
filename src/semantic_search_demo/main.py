@@ -1,5 +1,8 @@
 from pathlib import Path
 
+from semantic_search_demo.qdrant_vector_store import (
+    QdrantVectorStore,
+)
 from semantic_search_demo.semantic_search_service import (
     SemanticSearchService,
 )
@@ -9,11 +12,17 @@ DOCUMENT_DIRECTORY = Path("data/docs")
 
 
 def main() -> None:
-    search_service = SemanticSearchService(
-        document_directory=DOCUMENT_DIRECTORY,
+    vector_store = QdrantVectorStore(
+        path="data/qdrant",
+        collection_name="enterprise_documents",
     )
 
-    print("Building index...")
+    search_service = SemanticSearchService(
+        document_directory=DOCUMENT_DIRECTORY,
+        vector_store=vector_store,
+    )
+
+    print("Building Qdrant index...")
 
     search_service.build_index()
 
@@ -36,17 +45,18 @@ def main() -> None:
         print("No relevant results found.")
         return
 
-    
     for rank, result in enumerate(
         results,
         start=1,
     ):
         print("=" * 80)
+
         print(f"Rank: {rank}")
         print(f"Score: {result.score:.4f}")
         print(f"Document: {result.document_id}")
         print(f"Chunk: {result.chunk_id}")
         print(f"Source: {result.source}")
+
         print()
         print(result.text)
         print()
