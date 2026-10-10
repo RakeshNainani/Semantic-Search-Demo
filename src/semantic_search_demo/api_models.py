@@ -42,3 +42,8 @@ class SearchResponse(BaseModel):
     query: str
     result_count: int
     results: list[SearchResultResponse]
+
+
+class IngestResponse(BaseModel):
+    status: str
+    chunks_indexed: int

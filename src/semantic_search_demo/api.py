@@ -1,13 +1,18 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 
 from semantic_search_demo.api_models import (
+    IngestResponse,
     SearchRequest,
     SearchResponse,
     SearchResultResponse,
 )
 from semantic_search_demo.embeddings import EmbeddingService
+from semantic_search_demo.ingestion_service import (
+    IngestionService,
+)
 from semantic_search_demo.qdrant_vector_store import (
     QdrantVectorStore,
 )
@@ -32,7 +37,15 @@ async def lifespan(app: FastAPI):
         embedding_service=embedding_service,
     )
 
+    ingestion_service = IngestionService(
+        document_directory=Path("data/docs"),
+        vector_store=vector_store,
+        embedding_service=embedding_service,
+        max_characters=800,
+    )
+
     app.state.search_service = search_service
+    app.state.ingestion_service = ingestion_service
     app.state.vector_store = vector_store
 
     print("Semantic Search API ready.")
@@ -63,6 +76,23 @@ def health() -> dict[str, str]:
 
 
 @app.post(
+    "/ingest",
+    response_model=IngestResponse,
+)
+def ingest() -> IngestResponse:
+    ingestion_service: IngestionService = (
+        app.state.ingestion_service
+    )
+
+    chunk_count = ingestion_service.ingest()
+
+    return IngestResponse(
+        status="completed",
+        chunks_indexed=chunk_count,
+    )
+
+
+@app.post(
     "/search",
     response_model=SearchResponse,
 )
@@ -77,9 +107,17 @@ def search(
     filters: dict[str, str] | None = None
 
     if search_request.filters:
-        filters = search_request.filters.model_dump(
-            exclude_none=True
+        raw_filters = (
+            search_request.filters.model_dump(
+                exclude_none=True
+            )
         )
+
+        filters = {
+            key: value.strip()
+            for key, value in raw_filters.items()
+            if value.strip()
+        }
 
         if not filters:
             filters = None
