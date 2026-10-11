@@ -1,0 +1,55 @@
+[
+  {
+    "query_id": "cloud-001",
+    "query": "What requirements apply to production cloud applications?",
+    "relevant_chunk_ids": [
+      "cloud_architecture_standard-0",
+      "cloud_architecture_standard-1",
+      "cloud_architecture_standard-2",
+      "cloud_architecture_standard-3"
+    ]
+  },
+  {
+    "query_id": "cloud-002",
+    "query": "Where should application secrets and passwords be stored?",
+    "relevant_chunk_ids": [
+      "cloud_architecture_standard-1",
+      "cloud_architecture_standard-2"
+    ]
+  },
+  {
+    "query_id": "vendor-001",
+    "query": "What is required before a vendor gets production access?",
+    "relevant_chunk_ids": [
+      "vendor_onboarding_process-1"
+    ]
+  },
+  {
+    "query_id": "data-001",
+    "query": "How is access to enterprise data controlled?",
+    "relevant_chunk_ids": [
+      "data_access_standard-0",
+      "data_access_standard-1",
+      "data_access_standard-2",
+      "data_access_standard-3"
+    ]
+  },
+  {
+    "query_id": "incident-001",
+    "query": "What should happen when a critical IT incident occurs?",
+    "relevant_chunk_ids": [
+      "incident_management_sop-0",
+      "incident_management_sop-1"
+    ]
+  },
+  {
+    "query_id": "travel-001",
+    "query": "What rules apply to employee travel expenses?",
+    "relevant_chunk_ids": [
+      "travel_and_expense_policy-0",
+      "travel_and_expense_policy-1",
+      "travel_and_expense_policy-2",
+      "travel_and_expense_policy-3"
+    ]
+  }
+]
