@@ -146,3 +146,6 @@ class QdrantVectorStore(VectorStore):
             )
 
         return results
+    
+    def close(self) -> None:
+        self.client.close()

@@ -10,16 +10,11 @@ from semantic_search_demo.api_models import (
     SearchResultResponse,
 )
 from semantic_search_demo.embeddings import EmbeddingService
-from semantic_search_demo.ingestion_service import (
-    IngestionService,
-)
-from semantic_search_demo.qdrant_vector_store import (
-    QdrantVectorStore,
-)
-from semantic_search_demo.semantic_search_service import (
-    SemanticSearchService,
-)
-
+from semantic_search_demo.ingestion_service import IngestionService
+from semantic_search_demo.qdrant_vector_store import QdrantVectorStore
+from semantic_search_demo.semantic_search_service import SemanticSearchService
+# from semantic_search_demo.chunker import ParagraphChunker
+from semantic_search_demo.token_chunker import TokenAwareChunker
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,12 +31,18 @@ async def lifespan(app: FastAPI):
         vector_store=vector_store,
         embedding_service=embedding_service,
     )
+    # chunking_strategy = ParagraphChunker(max_characters=800)
+    chunking_strategy = TokenAwareChunker(
+        tokenizer=embedding_service.tokenizer,
+        max_tokens=220,
+        overlap_tokens=30,
+    )
 
     ingestion_service = IngestionService(
         document_directory=Path("data/docs"),
         vector_store=vector_store,
         embedding_service=embedding_service,
-        max_characters=800,
+        chunking_strategy=chunking_strategy,
     )
 
     app.state.search_service = search_service

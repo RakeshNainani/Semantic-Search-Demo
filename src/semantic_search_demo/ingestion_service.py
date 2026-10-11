@@ -1,46 +1,42 @@
 from pathlib import Path
 
-from semantic_search_demo.chunker import chunk_documents
-from semantic_search_demo.embeddings import EmbeddingService
-from semantic_search_demo.loaders.document_loader import load_documents
-from semantic_search_demo.vector_store import VectorStore
+from semantic_search_demo.chunking_strategy import (ChunkingStrategy,)
+from semantic_search_demo.embeddings import (EmbeddingService,)
+from semantic_search_demo.loaders.document_loader import (load_documents,)
+from semantic_search_demo.vector_store import (VectorStore,)
 
 
 class IngestionService:
+
     def __init__(
         self,
         document_directory: Path,
         vector_store: VectorStore,
         embedding_service: EmbeddingService,
-        max_characters: int = 800,
+        chunking_strategy: ChunkingStrategy,
     ) -> None:
-        self.document_directory = document_directory
+
+        self.document_directory = (document_directory)
+
         self.vector_store = vector_store
-        self.embedding_service = embedding_service
-        self.max_characters = max_characters
+
+        self.embedding_service = (embedding_service)
+
+        self.chunking_strategy = (chunking_strategy)
 
     def ingest(self) -> int:
-        documents = load_documents(
-            self.document_directory
-        )
 
-        chunks = chunk_documents(
-            documents=documents,
-            max_characters=self.max_characters,
-        )
+        documents = load_documents(self.document_directory)
 
-        chunk_texts = [
-            chunk.text
-            for chunk in chunks
-        ]
+        chunks = (self.chunking_strategy.chunk_documents(documents))
 
-        embeddings = self.embedding_service.embed(
-            chunk_texts
-        )
+        if not chunks:
+            return 0
 
-        self.vector_store.add(
-            chunks=chunks,
-            embeddings=embeddings,
-        )
+        chunk_texts = [ chunk.text for chunk in chunks]
+
+        embeddings = (self.embedding_service.embed(chunk_texts))
+
+        self.vector_store.add(chunks=chunks,embeddings=embeddings,)
 
         return len(chunks)

@@ -1,5 +1,29 @@
 from semantic_search_demo.models import Chunk, Document
 
+from semantic_search_demo.chunking_strategy import (
+    ChunkingStrategy,
+)
+
+class ParagraphChunker(ChunkingStrategy):
+
+    def __init__(
+        self,
+        max_characters: int = 800,
+    ) -> None:
+        self.max_characters = max_characters
+
+    def chunk_documents(
+        self,
+        documents: list[Document],
+    ) -> list[Chunk]:
+
+        return chunk_documents(
+            documents=documents,
+            max_characters=self.max_characters,
+        )
+
+    
+
 
 def chunk_document(
     document: Document,

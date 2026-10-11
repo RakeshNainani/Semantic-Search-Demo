@@ -15,3 +15,4 @@ wheels/
 *.env
 
 data/qdrant/
+data/qdrant_token/

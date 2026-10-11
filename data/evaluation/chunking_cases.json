@@ -1,0 +1,35 @@
+[
+  {
+    "query_id": "cloud-production-001",
+    "query": "What network requirements apply to production cloud applications?",
+    "evidence_phrases": [
+      "Production workloads must not expose databases directly to the public internet.",
+      "Administrative ports such as SSH and RDP must not be publicly accessible."
+    ]
+  },
+  {
+    "query_id": "cloud-secrets-001",
+    "query": "Where should passwords and application secrets be stored?",
+    "evidence_phrases": [
+      "Passwords, API keys, certificates, and connection strings must be stored in approved secret-management services",
+      "Secrets must not be stored in source-code repositories."
+    ]
+  },
+  {
+    "query_id": "cloud-resilience-001",
+    "query": "What availability and disaster recovery requirements apply to production systems?",
+    "evidence_phrases": [
+      "Business-critical applications should avoid single points of failure.",
+      "Architects must document the Recovery Time Objective",
+      "Architects must document the Recovery Point Objective"
+    ]
+  },
+  {
+    "query_id": "vendor-security-001",
+    "query": "What must happen before a high-risk vendor gets production access?",
+    "evidence_phrases": [
+      "High-risk findings must be resolved or formally accepted before production access is granted.",
+      "Vendor access must be granted only after required approvals are complete."
+    ]
+  }
+]

@@ -20,3 +20,22 @@ class QueryEvaluationResult:
     recall_at_k: float
     hit_rate: float
     reciprocal_rank: float
+
+@dataclass
+class EvidenceEvaluationCase:
+    query_id: str
+    query: str
+    evidence_phrases: list[str]
+
+
+@dataclass
+class EvidenceEvaluationResult:
+    query_id: str
+    query: str
+
+    retrieved_chunk_ids: list[str]
+
+    precision_at_k: float
+    evidence_recall_at_k: float
+    hit_rate_at_k: float
+    reciprocal_rank: float
